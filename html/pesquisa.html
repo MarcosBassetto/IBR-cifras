@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBR - Pesquisar Cifras</title>
+    <link rel="shortcut icon" href="../img/logo_foco.png" type="image/x-icon">
+    <link rel="stylesheet" href="../CSS/estilo.css">
+</head>
+
+<body>
+
+    <!-- ===== CABEÇALHO COM LOGO E MENU ===== -->
+    <header>
+        <div class="header-left">
+            <img src="../img/ibr-removebg-preview.png" alt="IBR" class="logo">
+        </div>
+        <div class="header-right">
+            <button class="menu-hamburger" id="menuToggle" aria-label="Menu">&#9776;</button>
+            <nav class="menu-dropdown" id="menuDropdown">
+                <a href="../index.html">🏠 Início</a>
+                <a href="pesquisa.html">🔍 Pesquisar Cifras</a>
+                <a href="enviar.html">📤 Enviar Nova Cifra</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ===== CONTEÚDO PRINCIPAL ===== -->
+    <main>
+        <h1 class="titulo-principal" style="font-size:1.8rem; margin-bottom:20px;">🔍 Pesquisar Cifras</h1>
+
+        <div class="pagina-interna">
+            <form id="form-pesquisa" class="form-cifra">
+                <div class="search-bar-wrapper">
+                    <div class="campo-group">
+                        <label for="campo-busca">Filtrar por</label>
+                        <select id="campo-busca">
+                            <option value="nome">Nome da música</option>
+                            <option value="interprete">Intérprete</option>
+                            <option value="conteudo">Conteúdo</option>
+                        </select>
+                    </div>
+                    <div class="termo-group">
+                        <label for="termo-busca">Termo</label>
+                        <input type="text" id="termo-busca" placeholder="Digite sua pesquisa...">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="flex:0 0 auto;">Pesquisar</button>
+                </div>
+            </form>
+
+            <div id="resultados" class="resultados-pesquisa">
+                <!-- Resultados serão inseridos aqui -->
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== RODAPÉ ===== -->
+    <footer>
+        <img src="../img/ibr-removebg-preview.png" alt="IBR" class="logo-footer">
+    </footer>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="../js/main.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/pesquisa.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBR - Enviar Cifra</title>
+    <link rel="shortcut icon" href="../img/logo_foco.png" type="image/x-icon">
+    <link rel="stylesheet" href="../CSS/estilo.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+
+<body>
+
+    <!-- ===== CABEÇALHO COM LOGO E MENU ===== -->
+    <header>
+        <div class="header-left">
+            <img src="../img/ibr-removebg-preview.png" alt="IBR" class="logo">
+        </div>
+        <div class="header-right">
+            <button class="menu-hamburger" id="menuToggle" aria-label="Menu">&#9776;</button>
+            <nav class="menu-dropdown" id="menuDropdown">
+                <a href="../index.html">🏠 Início</a>
+                <a href="pesquisa.html">🔍 Pesquisar Cifras</a>
+                <a href="enviar.html">📤 Enviar Nova Cifra</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ===== CONTEÚDO PRINCIPAL ===== -->
+    <main>
+        <h1 id="titulo-pagina" class="titulo-principal" style="font-size:1.8rem; margin-bottom:20px;">📤 Enviar Nova Cifra</h1>
+
+        <div class="pagina-interna">
+            <form id="form-enviar" class="form-cifra">
+
+                <label for="nome">Nome da música (obrigatório)</label>
+                <input type="text" id="nome" placeholder="Ex: A Ele a Glória" required>
+
+                <label for="interprete">Intérprete (obrigatório)</label>
+                <input type="text" id="interprete" placeholder="Ex: Ministério de Louvor" required>
+
+                <label for="tom">Tom (opcional)</label>
+                <input type="text" id="tom" placeholder="Ex: C, G, Am...">
+
+                <label for="arquivo-pdf">Arquivo PDF (opcional na edição)</label>
+                <input type="file" id="arquivo-pdf" accept=".pdf">
+                <div id="status-extração" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-muted);"></div>
+
+                <!-- Botão para edição manual -->
+                <button type="button" id="btn-editar-conteudo" class="btn btn-outline" style="margin-top: 15px; display: none;">
+                    ✏️ Editar conteúdo extraído
+                </button>
+
+                <!-- Textarea oculto para edição manual -->
+                <div id="area-edicao" style="display: none; margin-top: 15px;">
+                    <label for="conteudo-manual">Conteúdo (edite se necessário):</label>
+                    <textarea id="conteudo-manual" rows="8" placeholder="O texto extraído do PDF aparecerá aqui..."></textarea>
+                    <button type="button" id="btn-salvar-edicao" class="btn btn-primary" style="margin-top: 10px;">
+                        ✅ Salvar edição
+                    </button>
+                    <button type="button" id="btn-cancelar-edicao" class="btn btn-secondary" style="margin-top: 10px;">
+                        ❌ Cancelar
+                    </button>
+                </div>
+
+                <!-- Campo oculto para armazenar o conteúdo final -->
+                <input type="hidden" id="conteudo" value="">
+
+                <!-- Campos ocultos para edição -->
+                <input type="hidden" id="modo-edicao" value="false">
+                <input type="hidden" id="cifra-id" value="">
+
+                <div class="grupo-botoes">
+                    <button type="submit" class="btn btn-primary" id="btn-enviar">Enviar</button>
+                    <button type="button" id="cancelar" class="btn btn-secondary">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- ===== RODAPÉ ===== -->
+    <footer>
+        <img src="../img/ibr-removebg-preview.png" alt="IBR" class="logo-footer">
+    </footer>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="../js/main.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/enviar.js"></script>
+
+</body>
+
+</html>
