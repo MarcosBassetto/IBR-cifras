@@ -60,11 +60,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnSalvarEdicao = document.getElementById('btn-salvar-edicao');
     const btnCancelarEdicao = document.getElementById('btn-cancelar-edicao');
 
-    // Configurar o worker do pdf.js (se não estiver em modo edição, ou se for edição e o usuário quiser trocar PDF)
+    // Configurar o worker do pdf.js
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
     // ============================================
-    // 1. EXTRAIR TEXTO DO PDF (apenas se não for edição, ou se o usuário trocar o arquivo)
+    // 1. EXTRAIR TEXTO DO PDF
     // ============================================
     arquivoInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
@@ -150,92 +150,92 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnEditar.style.display = 'inline-block';
     });
 
- // ============================================
-// 3. ENVIO DO FORMULÁRIO (novo ou edição)
-// ============================================
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    // ============================================
+    // 3. ENVIO DO FORMULÁRIO (Intérprete OPCIONAL)
+    // ============================================
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    console.log('🔹 Iniciando envio...');
+        console.log('🔹 Iniciando envio...');
 
-    const nome = document.getElementById('nome').value.trim();
-    const interprete = document.getElementById('interprete').value.trim();
-    const tom = document.getElementById('tom').value.trim();
-    const conteudo = conteudoHidden.value.trim();
-    const modoEdicao = document.getElementById('modo-edicao').value === 'true';
-    const cifraId = parseInt(document.getElementById('cifra-id').value) || null;
+        const nome = document.getElementById('nome').value.trim();
+        const interprete = document.getElementById('interprete').value.trim();
+        const tom = document.getElementById('tom').value.trim();
+        const conteudo = conteudoHidden.value.trim();
+        const modoEdicao = document.getElementById('modo-edicao').value === 'true';
+        const cifraId = parseInt(document.getElementById('cifra-id').value) || null;
 
-    console.log('📝 Dados do formulário:', { nome, interprete, tom, conteudo: conteudo.length, modoEdicao, cifraId });
+        console.log('📝 Dados do formulário:', { nome, interprete, tom, conteudo: conteudo.length, modoEdicao, cifraId });
 
-    // Validação
-    if (!nome || !interprete) {
-        mostrarToast('Preencha Nome e Intérprete.', '#b33');
-        return;
-    }
-
-    if (!conteudo) {
-        mostrarToast('Nenhum conteúdo. Selecione um PDF ou edite manualmente.', '#b33');
-        return;
-    }
-
-    // Ler PDF se houver
-    const file = arquivoInput.files[0];
-    let pdfBase64 = null;
-    if (file) {
-        try {
-            pdfBase64 = await lerArquivoComoBase64(file);
-            console.log('📄 PDF carregado (base64 length):', pdfBase64.length);
-        } catch (error) {
-            console.error('❌ Erro ao ler PDF:', error);
-            mostrarToast('Erro ao ler o arquivo PDF.', '#b33');
+        // ===== VALIDAÇÃO (Nome e Conteúdo são obrigatórios) =====
+        if (!nome) {
+            mostrarToast('Preencha o Nome da música.', '#b33');
             return;
         }
-    }
 
-    const dados = {
-        nome,
-        interprete,
-        tom: tom || '',
-        conteudo,
-        pdfBase64: pdfBase64 || null,
-        dataCriacao: new Date().toISOString()
-    };
-
-    console.log('💾 Salvando dados:', dados);
-
-    try {
-        if (modoEdicao && cifraId) {
-            await deletarCifra(cifraId);
-            console.log('🗑️ Cifra antiga removida (ID:', cifraId, ')');
+        if (!conteudo) {
+            mostrarToast('Nenhum conteúdo. Selecione um PDF ou edite manualmente.', '#b33');
+            return;
         }
-        await salvarCifra(dados);
-        console.log('✅ Cifra salva com sucesso!');
 
-        mostrarToast(modoEdicao ? 'Cifra atualizada com sucesso!' : 'Cifra salva com sucesso!', '#40E0D0');
+        // Ler PDF se houver
+        const file = arquivoInput.files[0];
+        let pdfBase64 = null;
+        if (file) {
+            try {
+                pdfBase64 = await lerArquivoComoBase64(file);
+                console.log('📄 PDF carregado (base64 length):', pdfBase64.length);
+            } catch (error) {
+                console.error('❌ Erro ao ler PDF:', error);
+                mostrarToast('Erro ao ler o arquivo PDF.', '#b33');
+                return;
+            }
+        }
 
-        // Limpar formulário
-        form.reset();
-        statusDiv.innerHTML = '';
-        conteudoHidden.value = '';
-        conteudoManual.value = '';
-        btnEditar.style.display = 'none';
-        areaEdicao.style.display = 'none';
-        btnEnviar.disabled = false;
+        const dados = {
+            nome,
+            interprete: interprete || '', // se vazio, salva como string vazia
+            tom: tom || '',
+            conteudo,
+            pdfBase64: pdfBase64 || null,
+            dataCriacao: new Date().toISOString()
+        };
 
-        // Limpar sessionStorage
-        sessionStorage.removeItem('modoEdicao');
-        sessionStorage.removeItem('cifraId');
+        console.log('💾 Salvando dados:', dados);
 
-        // Redirecionar após pequeno delay
-        setTimeout(() => {
-            window.location.href = '../index.html';
-        }, 1500);
+        try {
+            if (modoEdicao && cifraId) {
+                await deletarCifra(cifraId);
+                console.log('🗑️ Cifra antiga removida (ID:', cifraId, ')');
+            }
+            await salvarCifra(dados);
+            console.log('✅ Cifra salva com sucesso!');
 
-    } catch (error) {
-        console.error('❌ Erro ao salvar:', error);
-        mostrarToast('Erro ao salvar: ' + error.message, '#b33');
-    }
-});
+            mostrarToast(modoEdicao ? 'Cifra atualizada com sucesso!' : 'Cifra salva com sucesso!', '#40E0D0');
+
+            // Limpar formulário
+            form.reset();
+            statusDiv.innerHTML = '';
+            conteudoHidden.value = '';
+            conteudoManual.value = '';
+            btnEditar.style.display = 'none';
+            areaEdicao.style.display = 'none';
+            btnEnviar.disabled = false;
+
+            // Limpar sessionStorage
+            sessionStorage.removeItem('modoEdicao');
+            sessionStorage.removeItem('cifraId');
+
+            // Redirecionar após pequeno delay
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 1500);
+
+        } catch (error) {
+            console.error('❌ Erro ao salvar:', error);
+            mostrarToast('Erro ao salvar: ' + error.message, '#b33');
+        }
+    });
 
     // ============================================
     // 4. CANCELAR
