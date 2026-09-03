@@ -90,8 +90,24 @@
     <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBXssz_sR3XqrpFFPOZJhOVzxfV8YO1CPM",
+            authDomain: "ibr---cirfras.firebaseapp.com",
+            projectId: "ibr---cirfras",
+            storageBucket: "ibr---cirfras.firebasestorage.app",
+            messagingSenderId: "513023714971",
+            appId: "1:513023714971:web:768cd8cd05c7e8bba0083e"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+
     <!-- ===== SCRIPTS ===== -->
-    <script src="../js/main.js"></script>
+    <script src="../js/firebase.js"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/enviar.js"></script>
 
