@@ -1,4 +1,4 @@
-// enviar.js - Lógica da página de envio/edição
+// enviar.js - Lógica da página de envio/edição (com Firestore)
 
 let cifraAntiga = null;
 
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ============================================
-    // 3. ENVIO DO FORMULÁRIO
+    // 3. ENVIO DO FORMULÁRIO (com Firestore)
     // ============================================
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             if (modoEdicao && cifraId) {
+                // Para edição no Firestore, deletamos a antiga e criamos uma nova
                 await deletarCifra(cifraId);
                 console.log('🗑️ Cifra antiga removida (ID:', cifraId, ')');
             }

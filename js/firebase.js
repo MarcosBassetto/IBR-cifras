@@ -1,7 +1,7 @@
 // js/firebase.js - Substitui as funções do IndexedDB pelo Firestore
 
 // Salvar cifra no Firestore
-async function salvarCifra(dados) {
+window.salvarCifra = async function(dados) {
     try {
         const docRef = await db.collection('cifras').add(dados);
         console.log('✅ Cifra salva no Firestore (ID:', docRef.id, ')');
@@ -10,10 +10,10 @@ async function salvarCifra(dados) {
         console.error('❌ Erro ao salvar no Firestore:', error);
         throw error;
     }
-}
+};
 
 // Listar todas as cifras do Firestore
-async function listarTodasCifras() {
+window.listarTodasCifras = async function() {
     try {
         const snapshot = await db.collection('cifras').orderBy('nome').get();
         const cifras = [];
@@ -26,10 +26,10 @@ async function listarTodasCifras() {
         console.error('❌ Erro ao listar do Firestore:', error);
         return [];
     }
-}
+};
 
 // Deletar cifra do Firestore
-async function deletarCifra(id) {
+window.deletarCifra = async function(id) {
     try {
         await db.collection('cifras').doc(id).delete();
         console.log('🗑️ Cifra deletada do Firestore (ID:', id, ')');
@@ -37,10 +37,10 @@ async function deletarCifra(id) {
         console.error('❌ Erro ao deletar do Firestore:', error);
         throw error;
     }
-}
+};
 
 // Atualizar cifra no Firestore (opcional)
-async function atualizarCifra(id, dados) {
+window.atualizarCifra = async function(id, dados) {
     try {
         await db.collection('cifras').doc(id).update(dados);
         console.log('✏️ Cifra atualizada no Firestore (ID:', id, ')');
@@ -48,10 +48,10 @@ async function atualizarCifra(id, dados) {
         console.error('❌ Erro ao atualizar no Firestore:', error);
         throw error;
     }
-}
+};
 
 // Função de backup para manter compatibilidade
-function mostrarToast(mensagem, cor = '#40E0D0') {
+window.mostrarToast = function(mensagem, cor = '#40E0D0') {
     let toast = document.querySelector('.toast');
     if (!toast) {
         toast = document.createElement('div');
@@ -65,5 +65,4 @@ function mostrarToast(mensagem, cor = '#40E0D0') {
     toast.classList.add('visivel');
     clearTimeout(toast._timeout);
     toast._timeout = setTimeout(() => toast.classList.remove('visivel'), 3000);
-}
-
+};
