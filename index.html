@@ -21,25 +21,14 @@
                 <a href="index.html">🏠 Início</a>
                 <a href="html/pesquisa.html">🔍 Pesquisar Cifras</a>
                 <a href="html/enviar.html">📤 Enviar Nova Cifra</a>
-                <!-- Botão de migração será adicionado via JS, mas também colocamos um fixo abaixo -->
             </nav>
         </div>
     </header>
 
-    <!-- ===== BOTÃO DE MIGRAÇÃO FIXO (VISÍVEL) ===== -->
-    <div style="text-align: center; margin: 10px 0;">
-        <button id="btn-migrar-firebase" class="btn btn-primary" style="background-color: #f39c12; color: #1a1a1a;">
-            🔄 Migrar dados do IndexedDB para o Firebase
-        </button>
-        <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px;">
-            Clique para transferir todas as cifras do seu navegador para o banco de dados na nuvem.
-        </p>
-    </div>
-
     <!-- ===== CONTEÚDO PRINCIPAL ===== -->
     <main>
 
-        <h1 class="titulo-principal">Cifras - CIFRAS</h1>
+        <h1 class="titulo-principal">IBR - CIFRAS</h1>
 
         <div class="progress-wrapper">
             <div class="progress-circle">
@@ -98,6 +87,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
+        // ============================================
+        // SUBSTITUA COM AS CREDENCIAIS DO SEU PROJETO
+        // ============================================
         const firebaseConfig = {
             apiKey: "AIzaSyBXssz_sR3XqrpFFPOZJhOVzxfV8YO1CPM",
             authDomain: "ibr---cirfras.firebaseapp.com",
@@ -112,85 +104,16 @@
     </script>
 
     <!-- ========================================= -->
-    <!-- ===== SCRIPT DE MIGRAÇÃO ===== -->
+    <!-- ===== SCRIPT DE MIGRAÇÃO (TEMPORÁRIO) ===== -->
     <!-- ========================================= -->
-    <script>
-        // ===== FUNÇÕES DE MIGRAÇÃO DIRETAS (sem depender de arquivo externo) =====
-
-        // 1. Ler dados do IndexedDB
-        function listarDoIndexedDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open('CifrasDB', 1);
-                request.onsuccess = (e) => {
-                    const db = e.target.result;
-                    const tx = db.transaction('cifras', 'readonly');
-                    const store = tx.objectStore('cifras');
-                    const req = store.getAll();
-                    req.onsuccess = () => {
-                        console.log('📋 Cifras lidas do IndexedDB:', req.result.length);
-                        resolve(req.result);
-                    };
-                    req.onerror = () => {
-                        console.error('❌ Erro ao ler IndexedDB:', req.error);
-                        reject(req.error);
-                    };
-                };
-                request.onerror = () => {
-                    console.error('❌ Erro ao abrir IndexedDB:', request.error);
-                    reject(request.error);
-                };
-            });
-        }
-
-        // 2. Função de migração
-        async function migrarDados() {
-            try {
-                const cifras = await listarDoIndexedDB();
-                if (cifras.length === 0) {
-                    alert('Nenhuma cifra encontrada no IndexedDB para migrar.');
-                    return;
-                }
-
-                if (!confirm(`Deseja migrar ${cifras.length} cifras para o Firebase Firestore?`)) {
-                    return;
-                }
-
-                let sucessos = 0;
-                let erros = 0;
-
-                for (const cifra of cifras) {
-                    try {
-                        const { id, ...dadosSemId } = cifra;
-                        await db.collection('cifras').add(dadosSemId);
-                        sucessos++;
-                        console.log(`✅ Migrada: ${cifra.nome}`);
-                    } catch (error) {
-                        erros++;
-                        console.error(`❌ Erro ao migrar "${cifra.nome}":`, error);
-                    }
-                }
-
-                alert(`Migração concluída!\nSucessos: ${sucessos}\nErros: ${erros}`);
-                // Recarregar a página para mostrar os dados do Firestore
-                location.reload();
-            } catch (error) {
-                console.error('Erro na migração:', error);
-                alert('Erro ao migrar dados. Veja o console para detalhes.');
-            }
-        }
-
-        // 3. Associar o botão fixo à função de migração
-        document.addEventListener('DOMContentLoaded', function() {
-            const btn = document.getElementById('btn-migrar-firebase');
-            if (btn) {
-                btn.addEventListener('click', migrarDados);
-            }
-        });
-    </script>
+    <!-- ATENÇÃO: Este script adiciona um botão "🔄 Migrar para Firebase" no menu.
+         Após a migração ser concluída com sucesso, você pode REMOVER esta linha. -->
+    <script src="js/migrar.js"></script>
 
     <!-- ========================================= -->
     <!-- ===== SEUS SCRIPTS ===== -->
     <!-- ========================================= -->
+    <!-- firebase.js substitui o antigo main.js -->
     <script src="js/firebase.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/index.js"></script>
