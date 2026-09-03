@@ -28,7 +28,8 @@
 
     <!-- ===== CONTEÚDO PRINCIPAL ===== -->
     <main>
-        <h1 id="titulo-pagina" class="titulo-principal" style="font-size:1.8rem; margin-bottom:20px;">📤 Enviar Nova Cifra</h1>
+        <h1 id="titulo-pagina" class="titulo-principal" style="font-size:1.8rem; margin-bottom:20px;">📤 Enviar Nova
+            Cifra</h1>
 
         <div class="pagina-interna">
             <form id="form-enviar" class="form-cifra">
@@ -42,19 +43,22 @@
                 <label for="tom">Tom (opcional)</label>
                 <input type="text" id="tom" placeholder="Ex: C, G, Am...">
 
-                <label for="arquivo-pdf">Arquivo PDF (opcional na edição)</label>
-                <input type="file" id="arquivo-pdf" accept=".pdf">
+                <label for="arquivo-pdf">Arquivo PDF (obrigatório)</label>
+                <input type="file" id="arquivo-pdf" accept=".pdf" required>
                 <div id="status-extração" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-muted);"></div>
 
                 <!-- Botão para edição manual -->
-                <button type="button" id="btn-editar-conteudo" class="btn btn-outline" style="margin-top: 15px; display: none;">
+                <button type="button" id="btn-editar-conteudo" class="btn btn-outline"
+                    style="margin-top: 15px; display: none;">
                     ✏️ Editar conteúdo extraído
                 </button>
 
                 <!-- Textarea oculto para edição manual -->
                 <div id="area-edicao" style="display: none; margin-top: 15px;">
-                    <label for="conteudo-manual">Conteúdo (edite se necessário):</label>
-                    <textarea id="conteudo-manual" rows="8" placeholder="O texto extraído do PDF aparecerá aqui..."></textarea>
+                    <label for="conteudo-manual">Conteúdo (Esse campo é utilizada para pesquisar através da
+                        letra):</label>
+                    <textarea id="conteudo-manual" rows="8"
+                        placeholder="O texto extraído do PDF aparecerá aqui..."></textarea>
                     <button type="button" id="btn-salvar-edicao" class="btn btn-primary" style="margin-top: 10px;">
                         ✅ Salvar edição
                     </button>
