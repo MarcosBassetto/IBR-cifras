@@ -1,11 +1,10 @@
-// pesquisa.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form-pesquisa');
     const campoSelect = document.getElementById('campo-busca');
     const termoInput = document.getElementById('termo-busca');
     const resultadosDiv = document.getElementById('resultados');
 
+    // Evento de submit do formulário
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -17,13 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Carregar todas as cifras
         const todas = await listarTodasCifras();
-
-        // Normalizar termo
         const termoNormalizado = normalizarTexto(termo);
 
-        // Filtrar
         const resultados = todas.filter(c => {
             let valor = '';
             if (campo === 'nome') valor = c.nome || '';
@@ -34,11 +29,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return valorNormalizado.includes(termoNormalizado);
         });
 
-        // Ordenar por nome
         resultados.sort((a, b) => a.nome.localeCompare(b.nome));
-
         exibirResultados(resultados, termo);
     });
+
+    // ===== LER PARÂMETROS DA URL =====
+    function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            campo: params.get('campo') || '',
+            termo: params.get('termo') || ''
+        };
+    }
+
+    // Verificar se há parâmetros e preencher/submeter
+    const params = getQueryParams();
+    if (params.campo && params.termo) {
+        campoSelect.value = params.campo;
+        termoInput.value = decodeURIComponent(params.termo);
+        // Disparar a pesquisa automaticamente após um pequeno delay
+        setTimeout(() => {
+            form.dispatchEvent(new Event('submit'));
+        }, 300);
+    }
 });
 
 // ============================================
@@ -46,19 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 function normalizarTexto(texto) {
     if (!texto) return '';
-
-    // 1. Remove acentos (normalização NFD)
     const semAcentos = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-    // 2. Converte para minúsculas
     const minusculas = semAcentos.toLowerCase();
-
-    // 3. Substitui qualquer caractere que não seja letra, número ou espaço por espaço
     const limpo = minusculas.replace(/[^a-z0-9\s]/g, ' ');
-
-    // 4. Remove espaços extras (múltiplos espaços -> um só) e trim
     const semEspacosExtras = limpo.replace(/\s+/g, ' ').trim();
-
     return semEspacosExtras;
 }
 
@@ -74,7 +78,6 @@ function exibirResultados(resultados, termo) {
         return;
     }
 
-    // Cria a tabela
     let html = `
         <div class="tabela-wrapper">
             <table class="tabela-resultados">
@@ -90,12 +93,10 @@ function exibirResultados(resultados, termo) {
     `;
 
     resultados.forEach(c => {
-        // Trecho de até 200 caracteres
         let trecho = c.conteudo || '';
         if (trecho.length > 200) {
             trecho = trecho.substring(0, 200) + '...';
         }
-        // Escapar HTML para evitar injeção
         trecho = escapeHtml(trecho);
 
         html += `
@@ -116,7 +117,6 @@ function exibirResultados(resultados, termo) {
 
     container.innerHTML = html;
 
-    // ===== CLIQUE NA LINHA OU NO NOME =====
     container.querySelectorAll('.linha-resultado, .nome-musica').forEach(el => {
         el.addEventListener('click', (e) => {
             const id = parseInt(el.dataset.id);
@@ -140,17 +140,11 @@ function escapeHtml(texto) {
 // ============================================
 // EXPOR FUNÇÃO PARA O MODAL (global)
 // ============================================
-// A função abrirModalDetalhes está no index.js, mas precisamos
-// que ela esteja disponível aqui. Como a página pesquisa carrega
-// apenas o pesquisa.js, não temos acesso à função do index.js.
-// Vamos criar uma cópia simplificada que usa o listarTodasCifras.
-
 window.abrirModalDetalhes = async function(id) {
     const cifras = await listarTodasCifras();
     const cifra = cifras.find(c => c.id === id);
     if (!cifra) return;
 
-    // Criar ou reutilizar modal
     let overlay = document.querySelector('.modal-overlay');
     if (!overlay) {
         overlay = document.createElement('div');
@@ -181,14 +175,12 @@ window.abrirModalDetalhes = async function(id) {
     const pdfDiv = document.getElementById('modal-pdf-pesquisa');
     pdfDiv.innerHTML = '';
     if (cifra.pdfBase64) {
-        // Botão Baixar
         const linkDownload = document.createElement('a');
         linkDownload.href = `data:application/pdf;base64,${cifra.pdfBase64}`;
         linkDownload.download = `${cifra.nome}.pdf`;
         linkDownload.className = 'btn-baixar-pdf';
         linkDownload.textContent = '📄 Baixar PDF';
 
-        // Botão Visualizar
         const linkVisualizar = document.createElement('a');
         linkVisualizar.className = 'btn-baixar-pdf btn-visualizar-pdf';
         linkVisualizar.textContent = '👁️ Visualizar PDF';
@@ -227,3 +219,4 @@ window.abrirModalDetalhes = async function(id) {
 
     overlay.classList.add('ativo');
 };
+

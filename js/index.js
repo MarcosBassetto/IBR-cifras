@@ -1,4 +1,3 @@
-// index.js (com tooltip no H3)
 
 let todasCifras = [];
 let filtroLetra = '';
@@ -76,7 +75,8 @@ function renderizarCards() {
                 </svg>
             </div>
             <div class="card-footer">
-                <svg class="icone-outline icone-chama" data-id="${c.id}" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none">
+                <!-- Ícone de chama com tooltip do intérprete -->
+                <svg class="icone-outline icone-chama" data-id="${c.id}" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" style="cursor:pointer;">
                     <path d="M12 23c-4 0-7-3-7-7 0-4 7-12 7-12s7 8 7 12c0 4-3 7-7 7z" />
                     <title>${c.interprete || 'Intérprete não informado'}</title>
                 </svg>
@@ -98,6 +98,21 @@ function renderizarCards() {
             e.stopPropagation();
             const id = parseInt(title.dataset.id);
             abrirModalDetalhes(id);
+        });
+    });
+
+    // ===== CLIQUE NO ÍCONE DE CHAMA (pesquisar por intérprete) =====
+    document.querySelectorAll('.icone-chama').forEach(icon => {
+        icon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const titleEl = this.querySelector('title');
+            const interprete = titleEl ? titleEl.textContent : '';
+            if (interprete && interprete !== 'Intérprete não informado') {
+                const termo = encodeURIComponent(interprete);
+                window.location.href = `html/pesquisa.html?campo=interprete&termo=${termo}`;
+            } else {
+                mostrarToast('Intérprete não informado para esta cifra.', '#b33');
+            }
         });
     });
 
@@ -233,7 +248,7 @@ async function abrirModalDetalhes(id) {
     overlay.classList.add('ativo');
 }
 
-// Fechar modal
+// ===== FECHAR MODAL =====
 document.getElementById('modal-fechar').addEventListener('click', () => {
     document.getElementById('modal-overlay').classList.remove('ativo');
 });
