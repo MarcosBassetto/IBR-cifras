@@ -1,4 +1,4 @@
-// index.js (corrigido - innerHTML com letras maiúsculas e caminhos minúsculos)
+// index.js (com tooltip no H3)
 
 let todasCifras = [];
 let filtroLetra = '';
@@ -68,7 +68,7 @@ function renderizarCards() {
     container.innerHTML = cifrasFiltradas.map(c => `
         <div class="card-cifra" data-id="${c.id}">
             <div class="card-header">
-                <h3 style="cursor:pointer;" data-id="${c.id}">${c.nome}</h3>
+                <h3 style="cursor:pointer;" data-id="${c.id}" title="Música: ${c.nome} | Tom: ${c.tom || 'Sem tom'}">${c.nome}</h3>
                 <!-- Ícone de documento (edição) -->
                 <svg class="icone-outline icone-documento" data-id="${c.id}" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" style="cursor:pointer;">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
