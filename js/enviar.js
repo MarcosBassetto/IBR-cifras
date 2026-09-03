@@ -1,4 +1,3 @@
-// enviar.js - Lógica da página de envio/edição (com Firestore)
 
 let cifraAntiga = null;
 
@@ -22,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ===== VERIFICAR SE É EDIÇÃO =====
     const modoEdicao = sessionStorage.getItem('modoEdicao') === 'true';
-    const cifraId = parseInt(sessionStorage.getItem('cifraId'));
+    const cifraId = sessionStorage.getItem('cifraId'); // agora é string
 
     // Se não for edição, limpa qualquer resíduo do sessionStorage
     if (!modoEdicao) {
@@ -33,7 +32,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (modoEdicao && cifraId) {
         const cifras = await listarTodasCifras();
-        cifraAntiga = cifras.find(c => c.id === cifraId);
+        // Comparação usando String para garantir
+        cifraAntiga = cifras.find(c => String(c.id) === String(cifraId));
         if (cifraAntiga) {
             // Preencher formulário
             document.getElementById('nome').value = cifraAntiga.nome;
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tom = document.getElementById('tom').value.trim();
         const conteudo = conteudoHidden.value.trim();
         const modoEdicao = document.getElementById('modo-edicao').value === 'true';
-        const cifraId = parseInt(document.getElementById('cifra-id').value) || null;
+        const cifraId = document.getElementById('cifra-id').value || null; // agora é string
 
         if (!nome) {
             mostrarToast('Preencha o Nome da música.', '#b33');

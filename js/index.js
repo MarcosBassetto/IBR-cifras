@@ -2,6 +2,8 @@
 let todasCifras = [];
 let filtroLetra = '';
 
+console.log('🔥 index.js carregado');
+
 document.addEventListener('DOMContentLoaded', async () => {
     await carregarCifras();
     configurarFiltroAlfabetico();
@@ -64,40 +66,49 @@ function renderizarCards() {
         return;
     }
 
-    container.innerHTML = cifrasFiltradas.map(c => `
-        <div class="card-cifra" data-id="${c.id}">
+    container.innerHTML = cifrasFiltradas.map(c => {
+        // Garantir que o ID seja uma string (Firestore)
+        const idStr = String(c.id);
+        return `
+        <div class="card-cifra" data-id="${idStr}">
             <div class="card-header">
-                <h3 style="cursor:pointer;" data-id="${c.id}" title="Música: ${c.nome} | Tom: ${c.tom || 'Sem tom'}">${c.nome}</h3>
+                <h3 style="cursor:pointer;" data-id="${idStr}" title="Música: ${c.nome} | Tom: ${c.tom || 'Sem tom'}">${c.nome}</h3>
                 <!-- Ícone de documento (edição) -->
-                <svg class="icone-outline icone-documento" data-id="${c.id}" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" style="cursor:pointer;">
+                <svg class="icone-outline icone-documento" data-id="${idStr}" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" style="cursor:pointer;">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8" />
                 </svg>
             </div>
             <div class="card-footer">
                 <!-- Ícone de chama com tooltip do intérprete -->
-                <svg class="icone-outline icone-chama" data-id="${c.id}" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" style="cursor:pointer;">
+                <svg class="icone-outline icone-chama" data-id="${idStr}" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" style="cursor:pointer;">
                     <path d="M12 23c-4 0-7-3-7-7 0-4 7-12 7-12s7 8 7 12c0 4-3 7-7 7z" />
                     <title>${c.interprete || 'Intérprete não informado'}</title>
                 </svg>
                 <div class="acoes-wrapper">
-                    <button class="btn-acoes-toggle" data-id="${c.id}">•••</button>
-                    <div class="acoes-expandidas" data-id="${c.id}">
-                        <button class="btn-acao" data-id="${c.id}" data-acao="visualizar">👁️</button>
-                        <button class="btn-acao" data-id="${c.id}" data-acao="editar">✏️</button>
-                        <button class="btn-acao" data-id="${c.id}" data-acao="excluir">🗑️</button>
+                    <button class="btn-acoes-toggle" data-id="${idStr}">•••</button>
+                    <div class="acoes-expandidas" data-id="${idStr}">
+                        <button class="btn-acao" data-id="${idStr}" data-acao="visualizar">👁️</button>
+                        <button class="btn-acao" data-id="${idStr}" data-acao="editar">✏️</button>
+                        <button class="btn-acao" data-id="${idStr}" data-acao="excluir">🗑️</button>
                     </div>
                 </div>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 
     // ===== CLIQUE NO H3 (abrir modal) =====
     container.querySelectorAll('.card-header h3').forEach(title => {
-        title.addEventListener('click', (e) => {
+        title.addEventListener('click', function(e) {
             e.stopPropagation();
-            const id = parseInt(title.dataset.id);
-            abrirModalDetalhes(id);
+            const id = this.dataset.id;
+            console.log('🖱️ Clique no H3, ID:', id);
+            if (id && id !== 'undefined') {
+                abrirModalDetalhes(id);
+            } else {
+                console.warn('⚠️ ID inválido no H3');
+            }
         });
     });
 
@@ -118,34 +129,36 @@ function renderizarCards() {
 
     // ===== EVENTO DO DOCUMENTO (editar) =====
     document.querySelectorAll('.icone-documento').forEach(icon => {
-        icon.addEventListener('click', (e) => {
+        icon.addEventListener('click', function(e) {
             e.stopPropagation();
-            const id = icon.dataset.id;
-            sessionStorage.setItem('cifraId', id);
-            sessionStorage.setItem('modoEdicao', 'true');
-            window.location.href = 'html/enviar.html';
+            const id = this.dataset.id;
+            if (id) {
+                sessionStorage.setItem('cifraId', id);
+                sessionStorage.setItem('modoEdicao', 'true');
+                window.location.href = 'html/enviar.html';
+            }
         });
     });
 
     // ===== TOGGLE DAS AÇÕES =====
     document.querySelectorAll('.btn-acoes-toggle').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', function(e) {
             e.stopPropagation();
-            const id = btn.dataset.id;
+            const id = this.dataset.id;
             const expandidas = document.querySelector(`.acoes-expandidas[data-id="${id}"]`);
             if (expandidas) {
                 expandidas.classList.toggle('aberto');
-                btn.textContent = expandidas.classList.contains('aberto') ? '✕' : '•••';
+                this.textContent = expandidas.classList.contains('aberto') ? '✕' : '•••';
             }
         });
     });
 
     // ===== EVENTOS DAS AÇÕES =====
     document.querySelectorAll('.btn-acao').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
+        btn.addEventListener('click', async function(e) {
             e.stopPropagation();
-            const id = parseInt(btn.dataset.id);
-            const acao = btn.dataset.acao;
+            const id = this.dataset.id;
+            const acao = this.dataset.acao;
 
             const expandidas = document.querySelector(`.acoes-expandidas[data-id="${id}"]`);
             if (expandidas) {
@@ -186,11 +199,22 @@ function renderizarCards() {
 }
 
 // ============================================
-// MODAL DE DETALHES (com visualização do PDF)
+// MODAL DE DETALHES (corrigido)
 // ============================================
 async function abrirModalDetalhes(id) {
-    const cifra = todasCifras.find(c => c.id === id);
-    if (!cifra) return;
+    console.log('🔍 abrirModalDetalhes chamado com ID:', id);
+    
+    // Recarregar as cifras para garantir que temos os dados mais recentes
+    const cifrasAtualizadas = await listarTodasCifras();
+    const cifra = cifrasAtualizadas.find(c => String(c.id) === String(id));
+    
+    if (!cifra) {
+        console.error('❌ Cifra não encontrada para ID:', id);
+        mostrarToast('Cifra não encontrada.', '#b33');
+        return;
+    }
+
+    console.log('✅ Cifra encontrada:', cifra.nome);
 
     const overlay = document.getElementById('modal-overlay');
     document.getElementById('modal-titulo').textContent = cifra.nome;

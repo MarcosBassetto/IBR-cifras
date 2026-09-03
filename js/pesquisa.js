@@ -1,8 +1,8 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form-pesquisa');
     const campoSelect = document.getElementById('campo-busca');
     const termoInput = document.getElementById('termo-busca');
-    const resultadosDiv = document.getElementById('resultados');
 
     // Evento de submit do formulário
     form.addEventListener('submit', async (e) => {
@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (params.campo && params.termo) {
         campoSelect.value = params.campo;
         termoInput.value = decodeURIComponent(params.termo);
-        // Disparar a pesquisa automaticamente após um pequeno delay
         setTimeout(() => {
             form.dispatchEvent(new Event('submit'));
         }, 300);
@@ -93,6 +92,7 @@ function exibirResultados(resultados, termo) {
     `;
 
     resultados.forEach(c => {
+        const idStr = String(c.id); // Garantir string
         let trecho = c.conteudo || '';
         if (trecho.length > 200) {
             trecho = trecho.substring(0, 200) + '...';
@@ -100,8 +100,8 @@ function exibirResultados(resultados, termo) {
         trecho = escapeHtml(trecho);
 
         html += `
-            <tr class="linha-resultado" data-id="${c.id}">
-                <td class="nome-musica" data-id="${c.id}">${escapeHtml(c.nome)}</td>
+            <tr class="linha-resultado" data-id="${idStr}">
+                <td class="nome-musica" data-id="${idStr}">${escapeHtml(c.nome)}</td>
                 <td>${escapeHtml(c.interprete || '-')}</td>
                 <td>${escapeHtml(c.tom || '-')}</td>
                 <td class="trecho">${trecho}</td>
@@ -117,9 +117,10 @@ function exibirResultados(resultados, termo) {
 
     container.innerHTML = html;
 
+    // ===== CLIQUE NA LINHA OU NO NOME =====
     container.querySelectorAll('.linha-resultado, .nome-musica').forEach(el => {
         el.addEventListener('click', (e) => {
-            const id = parseInt(el.dataset.id);
+            const id = el.dataset.id;
             if (id && window.abrirModalDetalhes) {
                 window.abrirModalDetalhes(id);
             }
@@ -141,9 +142,13 @@ function escapeHtml(texto) {
 // EXPOR FUNÇÃO PARA O MODAL (global)
 // ============================================
 window.abrirModalDetalhes = async function(id) {
+    console.log('🔍 [pesquisa] abrirModalDetalhes ID:', id);
     const cifras = await listarTodasCifras();
-    const cifra = cifras.find(c => c.id === id);
-    if (!cifra) return;
+    const cifra = cifras.find(c => String(c.id) === String(id));
+    if (!cifra) {
+        mostrarToast('Cifra não encontrada.', '#b33');
+        return;
+    }
 
     let overlay = document.querySelector('.modal-overlay');
     if (!overlay) {
@@ -219,4 +224,3 @@ window.abrirModalDetalhes = async function(id) {
 
     overlay.classList.add('ativo');
 };
-
