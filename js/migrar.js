@@ -1,25 +1,57 @@
 // js/migrar.js - Script de migração do IndexedDB para o Firestore
+// (Não depende de funções externas)
 
+// ============================================
+// 1. FUNÇÃO PARA LER DO INDEXEDDB
+// ============================================
+function listarDoIndexedDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('CifrasDB', 1);
+        request.onsuccess = (e) => {
+            const db = e.target.result;
+            const tx = db.transaction('cifras', 'readonly');
+            const store = tx.objectStore('cifras');
+            const req = store.getAll();
+            req.onsuccess = () => {
+                console.log('📋 Cifras lidas do IndexedDB:', req.result.length);
+                resolve(req.result);
+            };
+            req.onerror = () => {
+                console.error('❌ Erro ao ler IndexedDB:', req.error);
+                reject(req.error);
+            };
+        };
+        request.onerror = () => {
+            console.error('❌ Erro ao abrir IndexedDB:', request.error);
+            reject(request.error);
+        };
+    });
+}
+
+// ============================================
+// 2. FUNÇÃO DE MIGRAÇÃO
+// ============================================
 async function migrarDados() {
     try {
-        // 1. Buscar dados do IndexedDB usando a função antiga (main.js)
-        // Se você ainda tiver o main.js carregado, use listarTodasCifras()
-        // Ou implemente uma função específica para ler do IndexedDB
-        const cifras = await listarTodasCifras();
+        // 1. Buscar dados do IndexedDB
+        const cifras = await listarDoIndexedDB();
         if (cifras.length === 0) {
             alert('Nenhuma cifra encontrada no IndexedDB para migrar.');
             return;
         }
 
+        // 2. Confirmar migração
         if (!confirm(`Deseja migrar ${cifras.length} cifras para o Firebase Firestore?`)) {
             return;
         }
 
+        // 3. Enviar cada cifra para o Firestore
         let sucessos = 0;
         let erros = 0;
 
         for (const cifra of cifras) {
             try {
+                // Remove o campo 'id' (que era auto-increment do IndexedDB)
                 const { id, ...dadosSemId } = cifra;
                 await db.collection('cifras').add(dadosSemId);
                 sucessos++;
@@ -37,7 +69,9 @@ async function migrarDados() {
     }
 }
 
-// Adiciona um botão no menu para iniciar a migração
+// ============================================
+// 3. ADICIONAR BOTÃO NO MENU
+// ============================================
 document.addEventListener('DOMContentLoaded', () => {
     const menu = document.getElementById('menuDropdown');
     if (menu) {

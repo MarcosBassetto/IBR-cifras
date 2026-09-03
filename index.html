@@ -81,7 +81,9 @@
         </div>
     </div>
 
-    <!-- ===== FIREBASE SDK ===== -->
+    <!-- ========================================= -->
+    <!-- ===== FIREBASE SDK E CONFIGURAÇÃO ===== -->
+    <!-- ========================================= -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
@@ -101,8 +103,17 @@
         console.log('🔥 Firebase conectado!');
     </script>
 
-    <!-- ===== SCRIPTS ===== -->
-    <!-- SUBSTITUA main.js POR firebase.js -->
+    <!-- ========================================= -->
+    <!-- ===== SCRIPT DE MIGRAÇÃO (TEMPORÁRIO) ===== -->
+    <!-- ========================================= -->
+    <!-- ATENÇÃO: Este script adiciona um botão "🔄 Migrar para Firebase" no menu.
+         Após a migração ser concluída com sucesso, você pode REMOVER esta linha. -->
+    <script src="js/migrar.js"></script>
+
+    <!-- ========================================= -->
+    <!-- ===== SEUS SCRIPTS ===== -->
+    <!-- ========================================= -->
+    <!-- firebase.js substitui o antigo main.js -->
     <script src="js/firebase.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/index.js"></script>
