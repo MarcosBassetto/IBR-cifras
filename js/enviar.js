@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('cifra-id').value = cifraId;
             document.getElementById('modo-edicao').value = 'true';
 
+            // ** GUARDAR O PDF ORIGINAL **
+            document.getElementById('pdf-original').value = cifra.pdfBase64 || '';
+
             // Atualizar título da página
             document.getElementById('titulo-pagina').textContent = '✏️ Editar Cifra';
 
@@ -164,8 +167,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const conteudo = conteudoHidden.value.trim();
         const modoEdicao = document.getElementById('modo-edicao').value === 'true';
         const cifraId = parseInt(document.getElementById('cifra-id').value) || null;
+        const pdfOriginal = document.getElementById('pdf-original').value || null; // PDF original (se edição)
 
-        console.log('📝 Dados do formulário:', { nome, interprete, tom, conteudo: conteudo.length, modoEdicao, cifraId });
+        console.log('📝 Dados do formulário:', { nome, interprete, tom, conteudo: conteudo.length, modoEdicao, cifraId, temPDFOriginal: !!pdfOriginal });
 
         // ===== VALIDAÇÃO (Nome e Conteúdo são obrigatórios) =====
         if (!nome) {
@@ -178,30 +182,39 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Ler PDF se houver
+        // ===== PROCESSAR PDF =====
         const file = arquivoInput.files[0];
         let pdfBase64 = null;
+
         if (file) {
+            // Se o usuário selecionou um novo arquivo, usar ele
             try {
                 pdfBase64 = await lerArquivoComoBase64(file);
-                console.log('📄 PDF carregado (base64 length):', pdfBase64.length);
+                console.log('📄 Novo PDF carregado (base64 length):', pdfBase64.length);
             } catch (error) {
                 console.error('❌ Erro ao ler PDF:', error);
                 mostrarToast('Erro ao ler o arquivo PDF.', '#b33');
                 return;
             }
+        } else if (modoEdicao && pdfOriginal) {
+            // Se está em modo edição e não selecionou novo arquivo, manter o original
+            pdfBase64 = pdfOriginal;
+            console.log('📄 Mantendo PDF original.');
         }
+
+        // Se não é edição e não há arquivo, permite salvar sem PDF (desde que tenha conteúdo)
+        // (já que o PDF é obrigatório apenas no HTML, mas a validação aqui permite)
 
         const dados = {
             nome,
-            interprete: interprete || '', // se vazio, salva como string vazia
+            interprete: interprete || '',
             tom: tom || '',
             conteudo,
-            pdfBase64: pdfBase64 || null,
+            pdfBase64: pdfBase64, // pode ser null se não houver PDF
             dataCriacao: new Date().toISOString()
         };
 
-        console.log('💾 Salvando dados:', dados);
+        console.log('💾 Salvando dados:', { ...dados, pdfBase64: pdfBase64 ? 'PDF presente' : 'Sem PDF' });
 
         try {
             if (modoEdicao && cifraId) {
@@ -221,6 +234,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             btnEditar.style.display = 'none';
             areaEdicao.style.display = 'none';
             btnEnviar.disabled = false;
+            document.getElementById('pdf-original').value = ''; // limpar original
 
             // Limpar sessionStorage
             sessionStorage.removeItem('modoEdicao');
@@ -248,6 +262,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnEditar.style.display = 'none';
         areaEdicao.style.display = 'none';
         btnEnviar.disabled = false;
+        document.getElementById('pdf-original').value = '';
         sessionStorage.removeItem('modoEdicao');
         sessionStorage.removeItem('cifraId');
         window.location.href = '../index.html';
