@@ -59,13 +59,13 @@ function renderizarCards() {
     }
 
     if (cifrasFiltradas.length === 0) {
-        container.innerHTML = `<p class="mensagem-vazia">${
+        container.innerhtml = `<p class="mensagem-vazia">${
             filtroLetra ? `Nenhuma cifra com a letra "${filtroLetra}".` : 'Nenhuma cifra cadastrada ainda.'
         }</p>`;
         return;
     }
 
-    container.innerHTML = cifrasFiltradas.map(c => `
+    container.innerhtml = cifrasFiltradas.map(c => `
         <div class="card-cifra" data-id="${c.id}">
             <div class="card-header">
                 <h3 style="cursor:pointer;" data-id="${c.id}">${c.nome}</h3>
@@ -108,7 +108,7 @@ function renderizarCards() {
             const id = icon.dataset.id;
             sessionStorage.setItem('cifraId', id);
             sessionStorage.setItem('modoEdicao', 'true');
-            window.location.href = 'HTML/enviar.html';
+            window.location.href = 'html/enviar.html';
         });
     });
 
@@ -146,7 +146,7 @@ function renderizarCards() {
                 case 'editar':
                     sessionStorage.setItem('cifraId', id);
                     sessionStorage.setItem('modoEdicao', 'true');
-                    window.location.href = 'HTML/enviar.html';
+                    window.location.href = 'html/enviar.html';
                     break;
                 case 'excluir':
                     if (confirm('Tem certeza que deseja excluir esta cifra?')) {
@@ -183,7 +183,7 @@ async function abrirModalDetalhes(id) {
     document.getElementById('modal-conteudo').textContent = cifra.conteudo || 'Conteúdo não disponível';
 
     const pdfDiv = document.getElementById('modal-pdf');
-    pdfDiv.innerHTML = '';
+    pdfDiv.innerhtml = '';
 
     if (cifra.pdfBase64) {
         // Botão para baixar
@@ -227,7 +227,7 @@ async function abrirModalDetalhes(id) {
         container.appendChild(linkVisualizar);
         pdfDiv.appendChild(container);
     } else {
-        pdfDiv.innerHTML = '<p style="color:var(--text-muted);">Nenhum PDF anexado.</p>';
+        pdfDiv.innerhtml = '<p style="color:var(--text-muted);">Nenhum PDF anexado.</p>';
     }
 
     overlay.classList.add('ativo');
