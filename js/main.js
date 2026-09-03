@@ -31,7 +31,6 @@ async function salvarCifra(dados) {
             const store = tx.objectStore('cifras');
             const request = store.add(dados);
 
-            // Aguarda a adição
             request.onsuccess = () => {
                 console.log('✅ Cifra adicionada (ID:', request.result, ')');
             };
@@ -40,7 +39,6 @@ async function salvarCifra(dados) {
                 reject(request.error);
             };
 
-            // Aguarda a transação completar
             tx.oncomplete = () => {
                 console.log('✅ Transação concluída.');
                 resolve();

@@ -1,70 +1,80 @@
-// enviar.js
+// enviar.js - Lógica da página de envio/edição
+
+let cifraAntiga = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // ===== VERIFICAR SE É EDIÇÃO =====
-    const modoEdicao = sessionStorage.getItem('modoEdicao') === 'true';
-    const cifraId = parseInt(sessionStorage.getItem('cifraId'));
-
-    if (modoEdicao && cifraId) {
-        // Carregar dados da cifra
-        const cifras = await listarTodasCifras();
-        const cifra = cifras.find(c => c.id === cifraId);
-        if (cifra) {
-            // Preencher formulário
-            document.getElementById('nome').value = cifra.nome;
-            document.getElementById('interprete').value = cifra.interprete || '';
-            document.getElementById('tom').value = cifra.tom || '';
-            document.getElementById('conteudo').value = cifra.conteudo || '';
-            document.getElementById('conteudo-manual').value = cifra.conteudo || '';
-            document.getElementById('cifra-id').value = cifraId;
-            document.getElementById('modo-edicao').value = 'true';
-
-            // ** GUARDAR O PDF ORIGINAL **
-            document.getElementById('pdf-original').value = cifra.pdfBase64 || '';
-
-            // Atualizar título da página
-            document.getElementById('titulo-pagina').textContent = '✏️ Editar Cifra';
-
-            // Abrir automaticamente a área de edição manual
-            document.getElementById('area-edicao').style.display = 'block';
-            document.getElementById('btn-editar-conteudo').style.display = 'none';
-
-            // Mostrar status
-            document.getElementById('status-extração').innerHTML =
-                `<span style="color: var(--primary-color);">📝 Modo edição – conteúdo carregado (${cifra.conteudo?.length || 0} caracteres)</span>`;
-
-            // Habilitar botão enviar
-            document.getElementById('btn-enviar').disabled = false;
-
-            // Remover a obrigatoriedade do arquivo PDF (já existe)
-            document.getElementById('arquivo-pdf').required = false;
-        } else {
-            mostrarToast('Cifra não encontrada.', '#b33');
-            // Limpar sessionStorage e redirecionar
-            sessionStorage.removeItem('modoEdicao');
-            sessionStorage.removeItem('cifraId');
-            setTimeout(() => window.location.href = '../index.html', 1500);
-        }
-    }
-
-    // ============================================
-    // CONFIGURAÇÕES DO FORMULÁRIO
-    // ============================================
-
+    // ===== REFERÊNCIAS AOS ELEMENTOS =====
     const form = document.getElementById('form-enviar');
     const arquivoInput = document.getElementById('arquivo-pdf');
     const statusDiv = document.getElementById('status-extração');
     const conteudoHidden = document.getElementById('conteudo');
     const btnEnviar = document.getElementById('btn-enviar');
-
     const btnEditar = document.getElementById('btn-editar-conteudo');
     const areaEdicao = document.getElementById('area-edicao');
     const conteudoManual = document.getElementById('conteudo-manual');
     const btnSalvarEdicao = document.getElementById('btn-salvar-edicao');
     const btnCancelarEdicao = document.getElementById('btn-cancelar-edicao');
 
-    // Configurar o worker do pdf.js
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    // Configurar worker do pdf.js
+    if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    }
+
+    // ===== VERIFICAR SE É EDIÇÃO =====
+    const modoEdicao = sessionStorage.getItem('modoEdicao') === 'true';
+    const cifraId = parseInt(sessionStorage.getItem('cifraId'));
+
+    // Se não for edição, limpa qualquer resíduo do sessionStorage
+    if (!modoEdicao) {
+        sessionStorage.removeItem('modoEdicao');
+        sessionStorage.removeItem('cifraId');
+        console.log('🧹 SessionStorage limpo (modo novo envio).');
+    }
+
+    if (modoEdicao && cifraId) {
+        const cifras = await listarTodasCifras();
+        cifraAntiga = cifras.find(c => c.id === cifraId);
+        if (cifraAntiga) {
+            // Preencher formulário
+            document.getElementById('nome').value = cifraAntiga.nome;
+            document.getElementById('interprete').value = cifraAntiga.interprete || '';
+            document.getElementById('tom').value = cifraAntiga.tom || '';
+            document.getElementById('conteudo').value = cifraAntiga.conteudo || '';
+            conteudoManual.value = cifraAntiga.conteudo || '';
+            document.getElementById('cifra-id').value = cifraId;
+            document.getElementById('modo-edicao').value = 'true';
+
+            document.getElementById('titulo-pagina').textContent = '✏️ Editar Cifra';
+            areaEdicao.style.display = 'block';
+            btnEditar.style.display = 'none';
+
+            statusDiv.innerHTML =
+                `<span style="color: var(--primary-color);">📝 Modo edição – conteúdo carregado (${cifraAntiga.conteudo?.length || 0} caracteres)</span>`;
+
+            btnEnviar.disabled = false;
+            arquivoInput.required = false;
+        } else {
+            mostrarToast('Cifra não encontrada.', '#b33');
+            sessionStorage.removeItem('modoEdicao');
+            sessionStorage.removeItem('cifraId');
+            setTimeout(() => window.location.href = '../index.html', 1500);
+        }
+    } else {
+        // Modo novo envio – garante que o formulário esteja vazio
+        document.getElementById('nome').value = '';
+        document.getElementById('interprete').value = '';
+        document.getElementById('tom').value = '';
+        conteudoHidden.value = '';
+        conteudoManual.value = '';
+        document.getElementById('cifra-id').value = '';
+        document.getElementById('modo-edicao').value = 'false';
+        document.getElementById('titulo-pagina').textContent = '📤 Enviar Nova Cifra';
+        areaEdicao.style.display = 'none';
+        btnEditar.style.display = 'none';
+        statusDiv.innerHTML = '';
+        btnEnviar.disabled = false;
+        arquivoInput.required = true;
+    }
 
     // ============================================
     // 1. EXTRAIR TEXTO DO PDF
@@ -154,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ============================================
-    // 3. ENVIO DO FORMULÁRIO (Intérprete OPCIONAL)
+    // 3. ENVIO DO FORMULÁRIO
     // ============================================
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -167,11 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const conteudo = conteudoHidden.value.trim();
         const modoEdicao = document.getElementById('modo-edicao').value === 'true';
         const cifraId = parseInt(document.getElementById('cifra-id').value) || null;
-        const pdfOriginal = document.getElementById('pdf-original').value || null; // PDF original (se edição)
 
-        console.log('📝 Dados do formulário:', { nome, interprete, tom, conteudo: conteudo.length, modoEdicao, cifraId, temPDFOriginal: !!pdfOriginal });
-
-        // ===== VALIDAÇÃO (Nome e Conteúdo são obrigatórios) =====
         if (!nome) {
             mostrarToast('Preencha o Nome da música.', '#b33');
             return;
@@ -182,12 +188,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // ===== PROCESSAR PDF =====
+        // ===== LER PDF (ou manter o antigo) =====
         const file = arquivoInput.files[0];
         let pdfBase64 = null;
 
         if (file) {
-            // Se o usuário selecionou um novo arquivo, usar ele
             try {
                 pdfBase64 = await lerArquivoComoBase64(file);
                 console.log('📄 Novo PDF carregado (base64 length):', pdfBase64.length);
@@ -196,25 +201,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mostrarToast('Erro ao ler o arquivo PDF.', '#b33');
                 return;
             }
-        } else if (modoEdicao && pdfOriginal) {
-            // Se está em modo edição e não selecionou novo arquivo, manter o original
-            pdfBase64 = pdfOriginal;
-            console.log('📄 Mantendo PDF original.');
+        } else if (modoEdicao && cifraAntiga && cifraAntiga.pdfBase64) {
+            pdfBase64 = cifraAntiga.pdfBase64;
+            console.log('📄 PDF mantido do registro anterior.');
         }
-
-        // Se não é edição e não há arquivo, permite salvar sem PDF (desde que tenha conteúdo)
-        // (já que o PDF é obrigatório apenas no HTML, mas a validação aqui permite)
 
         const dados = {
             nome,
             interprete: interprete || '',
             tom: tom || '',
             conteudo,
-            pdfBase64: pdfBase64, // pode ser null se não houver PDF
+            pdfBase64: pdfBase64 || null,
             dataCriacao: new Date().toISOString()
         };
 
-        console.log('💾 Salvando dados:', { ...dados, pdfBase64: pdfBase64 ? 'PDF presente' : 'Sem PDF' });
+        console.log('💾 Salvando dados:', dados);
 
         try {
             if (modoEdicao && cifraId) {
@@ -226,7 +227,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             mostrarToast(modoEdicao ? 'Cifra atualizada com sucesso!' : 'Cifra salva com sucesso!', '#40E0D0');
 
-            // Limpar formulário
             form.reset();
             statusDiv.innerHTML = '';
             conteudoHidden.value = '';
@@ -234,13 +234,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             btnEditar.style.display = 'none';
             areaEdicao.style.display = 'none';
             btnEnviar.disabled = false;
-            document.getElementById('pdf-original').value = ''; // limpar original
 
-            // Limpar sessionStorage
             sessionStorage.removeItem('modoEdicao');
             sessionStorage.removeItem('cifraId');
 
-            // Redirecionar após pequeno delay
             setTimeout(() => {
                 window.location.href = '../index.html';
             }, 1500);
@@ -262,7 +259,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnEditar.style.display = 'none';
         areaEdicao.style.display = 'none';
         btnEnviar.disabled = false;
-        document.getElementById('pdf-original').value = '';
         sessionStorage.removeItem('modoEdicao');
         sessionStorage.removeItem('cifraId');
         window.location.href = '../index.html';
