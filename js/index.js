@@ -1,4 +1,4 @@
-// index.js (versão completa com visualização do PDF e edição)
+// index.js (corrigido - innerHTML com letras maiúsculas e caminhos minúsculos)
 
 let todasCifras = [];
 let filtroLetra = '';
@@ -59,13 +59,13 @@ function renderizarCards() {
     }
 
     if (cifrasFiltradas.length === 0) {
-        container.innerhtml = `<p class="mensagem-vazia">${
+        container.innerHTML = `<p class="mensagem-vazia">${
             filtroLetra ? `Nenhuma cifra com a letra "${filtroLetra}".` : 'Nenhuma cifra cadastrada ainda.'
         }</p>`;
         return;
     }
 
-    container.innerhtml = cifrasFiltradas.map(c => `
+    container.innerHTML = cifrasFiltradas.map(c => `
         <div class="card-cifra" data-id="${c.id}">
             <div class="card-header">
                 <h3 style="cursor:pointer;" data-id="${c.id}">${c.nome}</h3>
@@ -183,7 +183,7 @@ async function abrirModalDetalhes(id) {
     document.getElementById('modal-conteudo').textContent = cifra.conteudo || 'Conteúdo não disponível';
 
     const pdfDiv = document.getElementById('modal-pdf');
-    pdfDiv.innerhtml = '';
+    pdfDiv.innerHTML = '';
 
     if (cifra.pdfBase64) {
         // Botão para baixar
@@ -227,7 +227,7 @@ async function abrirModalDetalhes(id) {
         container.appendChild(linkVisualizar);
         pdfDiv.appendChild(container);
     } else {
-        pdfDiv.innerhtml = '<p style="color:var(--text-muted);">Nenhum PDF anexado.</p>';
+        pdfDiv.innerHTML = '<p style="color:var(--text-muted);">Nenhum PDF anexado.</p>';
     }
 
     overlay.classList.add('ativo');
