@@ -1,24 +1,23 @@
-
 let todasCifras = [];
 let filtroLetra = '';
 
 console.log('🔥 index.js carregado');
 
+// ============================================
+// INICIALIZAÇÃO
+// ============================================
 document.addEventListener('DOMContentLoaded', async () => {
-    await carregarCifras();
+    // Carrega os dados com tela de loading
+    todasCifras = await carregarCifrasComLoading();
+    todasCifras.sort((a, b) => a.nome.localeCompare(b.nome));
+    atualizarContador();
+    renderizarCards();
     configurarFiltroAlfabetico();
 });
 
 // ============================================
-// CARREGAR CIFRAS E RENDERIZAR
+// ATUALIZAR CONTADOR
 // ============================================
-async function carregarCifras() {
-    todasCifras = await listarTodasCifras();
-    todasCifras.sort((a, b) => a.nome.localeCompare(b.nome));
-    atualizarContador();
-    renderizarCards();
-}
-
 function atualizarContador() {
     const contadorSpan = document.getElementById('contador-numero');
     if (contadorSpan) contadorSpan.textContent = todasCifras.length;
@@ -67,7 +66,6 @@ function renderizarCards() {
     }
 
     container.innerHTML = cifrasFiltradas.map(c => {
-        // Garantir que o ID seja uma string (Firestore)
         const idStr = String(c.id);
         return `
         <div class="card-cifra" data-id="${idStr}">
@@ -103,7 +101,6 @@ function renderizarCards() {
         title.addEventListener('click', function(e) {
             e.stopPropagation();
             const id = this.dataset.id;
-            console.log('🖱️ Clique no H3, ID:', id);
             if (id && id !== 'undefined') {
                 abrirModalDetalhes(id);
             } else {
@@ -140,7 +137,7 @@ function renderizarCards() {
         });
     });
 
-    // ===== TOGGLE DAS AÇÕES =====
+    // ===== TOGGLE DAS AÇÕES (reticências) =====
     document.querySelectorAll('.btn-acoes-toggle').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -153,13 +150,14 @@ function renderizarCards() {
         });
     });
 
-    // ===== EVENTOS DAS AÇÕES =====
+    // ===== EVENTOS DAS AÇÕES (visualizar, editar, excluir) =====
     document.querySelectorAll('.btn-acao').forEach(btn => {
         btn.addEventListener('click', async function(e) {
             e.stopPropagation();
             const id = this.dataset.id;
             const acao = this.dataset.acao;
 
+            // Fechar o grupo de ações
             const expandidas = document.querySelector(`.acoes-expandidas[data-id="${id}"]`);
             if (expandidas) {
                 expandidas.classList.remove('aberto');
@@ -178,9 +176,21 @@ function renderizarCards() {
                     break;
                 case 'excluir':
                     if (confirm('Tem certeza que deseja excluir esta cifra?')) {
-                        await deletarCifra(id);
-                        mostrarToast('Cifra excluída com sucesso!', '#40E0D0');
-                        await carregarCifras();
+                        mostrarLoading();
+                        try {
+                            await deletarCifra(id);
+                            mostrarToast('Cifra excluída com sucesso!', '#40E0D0');
+                            // Recarregar os dados
+                            todasCifras = await listarTodasCifras();
+                            todasCifras.sort((a, b) => a.nome.localeCompare(b.nome));
+                            atualizarContador();
+                            renderizarCards();
+                        } catch (error) {
+                            console.error('❌ Erro ao excluir:', error);
+                            mostrarToast('Erro ao excluir a cifra.', '#b33');
+                        } finally {
+                            esconderLoading();
+                        }
                     }
                     break;
             }
@@ -199,15 +209,15 @@ function renderizarCards() {
 }
 
 // ============================================
-// MODAL DE DETALHES (corrigido)
+// MODAL DE DETALHES (com visualização do PDF)
 // ============================================
 async function abrirModalDetalhes(id) {
     console.log('🔍 abrirModalDetalhes chamado com ID:', id);
-    
-    // Recarregar as cifras para garantir que temos os dados mais recentes
+
+    // Recarregar as cifras para garantir dados atualizados
     const cifrasAtualizadas = await listarTodasCifras();
     const cifra = cifrasAtualizadas.find(c => String(c.id) === String(id));
-    
+
     if (!cifra) {
         console.error('❌ Cifra não encontrada para ID:', id);
         mostrarToast('Cifra não encontrada.', '#b33');
@@ -272,7 +282,9 @@ async function abrirModalDetalhes(id) {
     overlay.classList.add('ativo');
 }
 
-// ===== FECHAR MODAL =====
+// ============================================
+// FECHAR MODAL
+// ============================================
 document.getElementById('modal-fechar').addEventListener('click', () => {
     document.getElementById('modal-overlay').classList.remove('ativo');
 });

@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ===== VERIFICAR SE É EDIÇÃO =====
     const modoEdicao = sessionStorage.getItem('modoEdicao') === 'true';
-    const cifraId = sessionStorage.getItem('cifraId'); // agora é string
+    const cifraId = sessionStorage.getItem('cifraId'); // string
 
     // Se não for edição, limpa qualquer resíduo do sessionStorage
     if (!modoEdicao) {
@@ -31,33 +31,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (modoEdicao && cifraId) {
-        const cifras = await listarTodasCifras();
-        // Comparação usando String para garantir
-        cifraAntiga = cifras.find(c => String(c.id) === String(cifraId));
-        if (cifraAntiga) {
-            // Preencher formulário
-            document.getElementById('nome').value = cifraAntiga.nome;
-            document.getElementById('interprete').value = cifraAntiga.interprete || '';
-            document.getElementById('tom').value = cifraAntiga.tom || '';
-            document.getElementById('conteudo').value = cifraAntiga.conteudo || '';
-            conteudoManual.value = cifraAntiga.conteudo || '';
-            document.getElementById('cifra-id').value = cifraId;
-            document.getElementById('modo-edicao').value = 'true';
+        // Mostra loading enquanto carrega os dados
+        mostrarLoading();
+        try {
+            const cifras = await listarTodasCifras();
+            cifraAntiga = cifras.find(c => String(c.id) === String(cifraId));
+            esconderLoading();
 
-            document.getElementById('titulo-pagina').textContent = '✏️ Editar Cifra';
-            areaEdicao.style.display = 'block';
-            btnEditar.style.display = 'none';
+            if (cifraAntiga) {
+                // Preencher formulário
+                document.getElementById('nome').value = cifraAntiga.nome;
+                document.getElementById('interprete').value = cifraAntiga.interprete || '';
+                document.getElementById('tom').value = cifraAntiga.tom || '';
+                document.getElementById('conteudo').value = cifraAntiga.conteudo || '';
+                conteudoManual.value = cifraAntiga.conteudo || '';
+                document.getElementById('cifra-id').value = cifraId;
+                document.getElementById('modo-edicao').value = 'true';
 
-            statusDiv.innerHTML =
-                `<span style="color: var(--primary-color);">📝 Modo edição – conteúdo carregado (${cifraAntiga.conteudo?.length || 0} caracteres)</span>`;
+                document.getElementById('titulo-pagina').textContent = '✏️ Editar Cifra';
+                areaEdicao.style.display = 'block';
+                btnEditar.style.display = 'none';
 
-            btnEnviar.disabled = false;
-            arquivoInput.required = false;
-        } else {
-            mostrarToast('Cifra não encontrada.', '#b33');
-            sessionStorage.removeItem('modoEdicao');
-            sessionStorage.removeItem('cifraId');
-            setTimeout(() => window.location.href = '../index.html', 1500);
+                statusDiv.innerHTML =
+                    `<span style="color: var(--primary-color);">📝 Modo edição – conteúdo carregado (${cifraAntiga.conteudo?.length || 0} caracteres)</span>`;
+
+                btnEnviar.disabled = false;
+                arquivoInput.required = false;
+            } else {
+                mostrarToast('Cifra não encontrada.', '#b33');
+                sessionStorage.removeItem('modoEdicao');
+                sessionStorage.removeItem('cifraId');
+                setTimeout(() => window.location.href = '../index.html', 1500);
+            }
+        } catch (error) {
+            esconderLoading();
+            console.error('❌ Erro ao carregar dados para edição:', error);
+            mostrarToast('Erro ao carregar os dados.', '#b33');
         }
     } else {
         // Modo novo envio – garante que o formulário esteja vazio
@@ -176,7 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tom = document.getElementById('tom').value.trim();
         const conteudo = conteudoHidden.value.trim();
         const modoEdicao = document.getElementById('modo-edicao').value === 'true';
-        const cifraId = document.getElementById('cifra-id').value || null; // agora é string
+        const cifraId = document.getElementById('cifra-id').value; // string
 
         if (!nome) {
             mostrarToast('Preencha o Nome da música.', '#b33');
@@ -218,13 +227,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('💾 Salvando dados:', dados);
 
         try {
+            mostrarLoading();
             if (modoEdicao && cifraId) {
-                // Para edição no Firestore, deletamos a antiga e criamos uma nova
                 await deletarCifra(cifraId);
                 console.log('🗑️ Cifra antiga removida (ID:', cifraId, ')');
             }
             await salvarCifra(dados);
             console.log('✅ Cifra salva com sucesso!');
+            esconderLoading();
 
             mostrarToast(modoEdicao ? 'Cifra atualizada com sucesso!' : 'Cifra salva com sucesso!', '#40E0D0');
 
@@ -244,6 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }, 1500);
 
         } catch (error) {
+            esconderLoading();
             console.error('❌ Erro ao salvar:', error);
             mostrarToast('Erro ao salvar: ' + error.message, '#b33');
         }
