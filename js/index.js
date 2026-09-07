@@ -46,11 +46,10 @@ function renderizarCards() {
   }
 
   if (cifrasFiltradas.length === 0) {
-    container.innerHTML = `<p class="mensagem-vazia">${
-      filtroLetra
-        ? `Nenhuma cifra com a letra "${filtroLetra}".`
-        : "Nenhuma cifra cadastrada ainda."
-    }</p>`;
+    container.innerHTML = `<p class="mensagem-vazia">${filtroLetra
+      ? `Nenhuma cifra com a letra "${filtroLetra}".`
+      : "Nenhuma cifra cadastrada ainda."
+      }</p>`;
     return;
   }
 
@@ -61,11 +60,14 @@ function renderizarCards() {
         <div class="card-cifra" data-id="${idStr}">
             <div class="card-header">
                 <h3 style="cursor:pointer;" data-id="${idStr}" title="Música: ${c.nome} | Tom: ${c.tom || "Sem tom"}">${c.nome}</h3>
+
                 <!-- Ícone de documento (edição) -->
-                <svg class="icone-outline icone-documento" data-id="${idStr}" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" style="cursor:pointer;">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                </svg>
+            <svg class="icone-outline icone-documento" data-id="${idStr}" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none" style="cursor:pointer;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <title>editar</title>
+            </svg>
+
             </div>
             <div class="card-footer">
                 <!-- Ícone de usuário com tooltip do intérprete -->
@@ -75,11 +77,11 @@ function renderizarCards() {
                 <title>${c.interprete || "Intérprete não informado"}</title>
             </svg>
                 <div class="acoes-wrapper">
-                    <button class="btn-acoes-toggle" data-id="${idStr}">•••</button>
+                    <button class="btn-acoes-toggle" data-id="${idStr}" title="mais opções">•••</button>
                     <div class="acoes-expandidas" data-id="${idStr}">
-                        <button class="btn-acao" data-id="${idStr}" data-acao="visualizar">👁️</button>
-                        <button class="btn-acao" data-id="${idStr}" data-acao="editar">✏️</button>
-                        <button class="btn-acao" data-id="${idStr}" data-acao="excluir">🗑️</button>
+                        <button class="btn-acao" data-id="${idStr}" data-acao="visualizar" title="visualizar">👁️</button>
+                        <button class="btn-acao" data-id="${idStr}" data-acao="editar" title="editar">✏️</button>
+                        <button class="btn-acao" data-id="${idStr}" data-acao="excluir" title="deletar">🗑️</button>
                     </div>
                 </div>
             </div>

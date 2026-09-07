@@ -284,6 +284,7 @@ footer .logo-footer:hover {
 }
 
 .icone-documento {
+    color: var(--text-muted); 
     width: 20px;
     height: 20px;
     cursor: pointer;
