@@ -1,6 +1,22 @@
-// ============================================
+// CONFIGURAÇÃO DO FIREBASE
+const firebaseConfig = {
+    apiKey: "AIzaSyBXssz_sR3XqrpFFPOZJhOVzxfV8YO1CPM",
+    authDomain: "ibr---cirfras.firebaseapp.com",
+    projectId: "ibr---cirfras",
+    storageBucket: "ibr---cirfras.firebasestorage.app",
+    messagingSenderId: "513023714971",
+    appId: "1:513023714971:web:768cd8cd05c7e8bba0083e"
+};
+
+// Inicializa o Firebase (se já não estiver inicializado)
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.firestore();
+
+console.log('🔥 Firebase conectado!');
+
 // LOADING OVERLAY (tela de carregamento)
-// ============================================
 function mostrarLoading() {
     let overlay = document.getElementById('loading-overlay');
     if (!overlay) {
@@ -63,9 +79,7 @@ function esconderLoading() {
     }
 }
 
-// ============================================
 // FUNÇÃO PRINCIPAL: CARREGAR DADOS COM LOADING
-// ============================================
 async function carregarCifrasComLoading() {
     mostrarLoading();
     try {
@@ -80,9 +94,7 @@ async function carregarCifrasComLoading() {
     }
 }
 
-// ============================================
 // FUNÇÕES CRUD (Firestore)
-// ============================================
 
 // Salvar cifra no Firestore
 window.salvarCifra = async function(dados) {
@@ -134,9 +146,7 @@ window.atualizarCifra = async function(id, dados) {
     }
 };
 
-// ============================================
 // TOAST (mensagens de feedback)
-// ============================================
 window.mostrarToast = function(mensagem, cor = '#40E0D0') {
     let toast = document.querySelector('.toast');
     if (!toast) {

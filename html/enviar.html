@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBR - Enviar Cifra</title>
+    <title>Enviar Cifra</title>
+    <link rel="shortcut icon" href="../img/logo_branco.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../css/estilo.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 
 <body>
 
-    <!-- ===== CABEÇALHO COM LOGO E MENU ===== -->
     <header>
         <div class="header-left">
             <img src="../img/logo.png" alt="IBR" class="logo">
@@ -26,10 +26,8 @@
         </div>
     </header>
 
-    <!-- ===== CONTEÚDO PRINCIPAL ===== -->
     <main>
-        <h1 id="titulo-pagina" class="titulo-principal" style="font-size:1.8rem; margin-bottom:20px;">📤 Enviar Nova
-            Cifra</h1>
+        <h1 id="titulo-pagina" class="titulo-principal titulo-pagina-enviar">📤 Enviar Nova Cifra</h1>
 
         <div class="pagina-interna">
             <form id="form-enviar" class="form-cifra">
@@ -45,32 +43,26 @@
 
                 <label for="arquivo-pdf">Arquivo PDF (obrigatório)</label>
                 <input type="file" id="arquivo-pdf" accept=".pdf" required>
-                <div id="status-extração" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-muted);"></div>
+                <div id="status-extração" class="status-extracao"></div>
 
-                <!-- Botão para edição manual -->
-                <button type="button" id="btn-editar-conteudo" class="btn btn-outline"
-                    style="margin-top: 15px; display: none;">
+                <button type="button" id="btn-editar-conteudo" class="btn btn-outline btn-editar-conteudo">
                     ✏️ Editar conteúdo extraído
                 </button>
 
-                <!-- Textarea oculto para edição manual -->
-                <div id="area-edicao" style="display: none; margin-top: 15px;">
-                    <label for="conteudo-manual">Conteúdo (Esse campo é utilizada para pesquisar através da
-                        letra):</label>
-                    <textarea id="conteudo-manual" rows="8"
-                        placeholder="O texto extraído do PDF aparecerá aqui..."></textarea>
-                    <button type="button" id="btn-salvar-edicao" class="btn btn-primary" style="margin-top: 10px;">
-                        ✅ Salvar edição
-                    </button>
-                    <button type="button" id="btn-cancelar-edicao" class="btn btn-secondary" style="margin-top: 10px;">
-                        ❌ Cancelar
-                    </button>
+                <div id="area-edicao" class="area-edicao">
+                    <label for="conteudo-manual">Conteúdo (Esse campo é utilizado para pesquisar através da letra):</label>
+                    <textarea id="conteudo-manual" rows="8" placeholder="O texto extraído do PDF aparecerá aqui..."></textarea>
+                    <div class="botoes-edicao">
+                        <button type="button" id="btn-salvar-edicao" class="btn btn-primary btn-salvar-edicao">
+                            ✅ Salvar edição
+                        </button>
+                        <button type="button" id="btn-cancelar-edicao" class="btn btn-secondary btn-cancelar-edicao">
+                            ❌ Cancelar
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Campo oculto para armazenar o conteúdo final -->
                 <input type="hidden" id="conteudo" value="">
-
-                <!-- Campos ocultos para edição -->
                 <input type="hidden" id="modo-edicao" value="false">
                 <input type="hidden" id="cifra-id" value="">
 
@@ -82,31 +74,15 @@
         </div>
     </main>
 
-    <!-- ===== RODAPÉ ===== -->
     <footer>
         <img src="../img/logo.png" alt="IBR" class="logo-footer">
     </footer>
 
-    <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
-    <!-- ===== FIREBASE SDK ===== -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBXssz_sR3XqrpFFPOZJhOVzxfV8YO1CPM",
-            authDomain: "ibr---cirfras.firebaseapp.com",
-            projectId: "ibr---cirfras",
-            storageBucket: "ibr---cirfras.firebasestorage.app",
-            messagingSenderId: "513023714971",
-            appId: "1:513023714971:web:768cd8cd05c7e8bba0083e"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-    </script>
 
-    <!-- ===== SCRIPTS ===== -->
     <script src="../js/firebase.js"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/enviar.js"></script>

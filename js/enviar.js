@@ -85,9 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         arquivoInput.required = true;
     }
 
-    // ============================================
     // 1. EXTRAIR TEXTO DO PDF
-    // ============================================
     arquivoInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -140,9 +138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // ============================================
     // 2. EDITAR CONTEÚDO MANUALMENTE
-    // ============================================
     btnEditar.addEventListener('click', () => {
         if (!conteudoManual.value) {
             conteudoManual.value = conteudoHidden.value;
@@ -172,9 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnEditar.style.display = 'inline-block';
     });
 
-    // ============================================
     // 3. ENVIO DO FORMULÁRIO (com Firestore)
-    // ============================================
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -260,9 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // ============================================
     // 4. CANCELAR
-    // ============================================
     document.getElementById('cancelar').addEventListener('click', () => {
         form.reset();
         statusDiv.innerHTML = '';
@@ -276,9 +268,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '../index.html';
     });
 
-    // ============================================
     // 5. FUNÇÕES AUXILIARES
-    // ============================================
     function lerArquivoComoBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();

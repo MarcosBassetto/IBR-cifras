@@ -1,5 +1,3 @@
-// menu.js - Controle do menu hambúrguer com ocultação da página atual
-
 document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menuToggle');
     const menuDropdown = document.getElementById('menuDropdown');

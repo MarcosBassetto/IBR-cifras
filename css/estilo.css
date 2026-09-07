@@ -654,6 +654,50 @@ footer .logo-footer:hover {
     }
 }
 
+/* ===== ENVIAR.HTML ===== */
+.titulo-pagina-enviar {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.status-extracao {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.btn-editar-conteudo {
+    margin-top: 15px;
+    display: none;
+}
+
+.area-edicao {
+    display: none;
+    margin-top: 15px;
+}
+
+.botoes-edicao {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-salvar-edicao,
+.btn-cancelar-edicao {
+    flex: 1 1 auto;
+    min-width: 120px;
+}
+
+/* ===== PESQUISA.HTML ===== */
+.titulo-pagina-pesquisa {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.btn-pesquisar {
+    flex: 0 0 auto;
+}
 
 /* ===== LOADING OVERLAY ===== */
 .loading-overlay {

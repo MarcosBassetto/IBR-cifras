@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form-pesquisa');
     const campoSelect = document.getElementById('campo-busca');
@@ -65,9 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ============================================
 // NORMALIZAÇÃO DE TEXTO
-// ============================================
 function normalizarTexto(texto) {
     if (!texto) return '';
     const semAcentos = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -77,9 +74,7 @@ function normalizarTexto(texto) {
     return semEspacosExtras;
 }
 
-// ============================================
 // EXIBIR RESULTADOS EM TABELA
-// ============================================
 function exibirResultados(resultados, termo) {
     const container = document.getElementById('resultados');
     if (!container) return;
@@ -140,9 +135,7 @@ function exibirResultados(resultados, termo) {
     });
 }
 
-// ============================================
 // ESCAPAR HTML (segurança)
-// ============================================
 function escapeHtml(texto) {
     if (!texto) return '';
     const div = document.createElement('div');
@@ -150,9 +143,7 @@ function escapeHtml(texto) {
     return div.innerHTML;
 }
 
-// ============================================
 // EXPOR FUNÇÃO PARA O MODAL (global)
-// ============================================
 window.abrirModalDetalhes = async function(id) {
     console.log('🔍 [pesquisa] abrirModalDetalhes ID:', id);
     mostrarLoading();

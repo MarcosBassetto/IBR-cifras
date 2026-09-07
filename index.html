@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBR - CIFRAS</title>
+    <title>CIFRAS</title>
+    <link rel="shortcut icon" href="./img/logo_branco.jpg" type="image/x-icon">
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 
 <body>
 
-    <!-- ===== CABEÇALHO COM LOGO E MENU ===== -->
     <header>
         <div class="header-left">
             <img src="img/logo.png" alt="IBR" class="logo">
@@ -25,7 +25,7 @@
         </div>
     </header>
 
-    <!-- ===== CONTEÚDO PRINCIPAL ===== -->
+
     <main>
 
         <h1 class="titulo-principal">IBR - CIFRAS</h1>
@@ -57,20 +57,17 @@
         </div>
 
         <div class="lista-cifras" id="lista-cifras">
-            <!-- Cards gerados pelo JS -->
+
         </div>
 
     </main>
 
-    <!-- ===== RODAPÉ ===== -->
     <footer>
         <img src="img/logo.png" alt="IBR" class="logo-footer">
     </footer>
 
-    <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
-    <!-- ===== MODAL ===== -->
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal-conteudo">
             <span class="fechar" id="modal-fechar">&times;</span>
@@ -81,32 +78,11 @@
         </div>
     </div>
 
-    <!-- ========================================= -->
-    <!-- ===== FIREBASE SDK E CONFIGURAÇÃO ===== -->
-    <!-- ========================================= -->
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script>
-        // ============================================
-        // SUBSTITUA COM AS CREDENCIAIS DO SEU PROJETO
-        // ============================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyBXssz_sR3XqrpFFPOZJhOVzxfV8YO1CPM",
-            authDomain: "ibr---cirfras.firebaseapp.com",
-            projectId: "ibr---cirfras",
-            storageBucket: "ibr---cirfras.firebasestorage.app",
-            messagingSenderId: "513023714971",
-            appId: "1:513023714971:web:768cd8cd05c7e8bba0083e"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        console.log('🔥 Firebase conectado!');
-    </script>
 
-    <!-- ========================================= -->
-    <!-- ===== SEUS SCRIPTS ===== -->
-    <!-- ========================================= -->
-    <!-- firebase.js substitui o antigo main.js -->
+
     <script src="js/firebase.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/index.js"></script>

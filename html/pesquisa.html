@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBR - Pesquisar Cifras</title>
+    <title>Pesquisar Cifras</title>
+    <link rel="shortcut icon" href="../img/logo_branco.jpg" type="image/x-icon">
     <link rel="stylesheet" href="../css/estilo.css">
 </head>
 
 <body>
 
-    <!-- ===== CABEÇALHO COM LOGO E MENU ===== -->
     <header>
         <div class="header-left">
             <img src="../img/logo.png" alt="IBR" class="logo">
@@ -25,9 +25,8 @@
         </div>
     </header>
 
-    <!-- ===== CONTEÚDO PRINCIPAL ===== -->
     <main>
-        <h1 class="titulo-principal" style="font-size:1.8rem; margin-bottom:20px;">🔍 Pesquisar Cifras</h1>
+        <h1 class="titulo-principal titulo-pagina-pesquisa">🔍 Pesquisar Cifras</h1>
 
         <div class="pagina-interna">
             <form id="form-pesquisa" class="form-cifra">
@@ -44,41 +43,24 @@
                         <label for="termo-busca">Termo</label>
                         <input type="text" id="termo-busca" placeholder="Digite sua pesquisa...">
                     </div>
-                    <button type="submit" class="btn btn-primary" style="flex:0 0 auto;">Pesquisar</button>
+                    <button type="submit" class="btn btn-primary btn-pesquisar">Pesquisar</button>
                 </div>
             </form>
 
-            <div id="resultados" class="resultados-pesquisa">
-                <!-- Resultados serão inseridos aqui -->
-            </div>
+            <div id="resultados" class="resultados-pesquisa"></div>
         </div>
     </main>
 
-    <!-- ===== RODAPÉ ===== -->
     <footer>
         <img src="../img/logo.png" alt="IBR" class="logo-footer">
     </footer>
 
-    <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
-    <!-- ===== FIREBASE SDK ===== -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBXssz_sR3XqrpFFPOZJhOVzxfV8YO1CPM",
-            authDomain: "ibr---cirfras.firebaseapp.com",
-            projectId: "ibr---cirfras",
-            storageBucket: "ibr---cirfras.firebasestorage.app",
-            messagingSenderId: "513023714971",
-            appId: "1:513023714971:web:768cd8cd05c7e8bba0083e"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-    </script>
 
-    <!-- ===== SCRIPTS ===== -->
     <script src="../js/firebase.js"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/pesquisa.js"></script>
